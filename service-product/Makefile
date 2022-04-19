@@ -1,6 +1,6 @@
 .PHONY: build
 build:
-	docker build . --tag theikalman/user:latest
+	docker build . --tag theikalman/product:latest
 
 .PHONY: run
 run:

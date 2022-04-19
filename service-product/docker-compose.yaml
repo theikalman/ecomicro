@@ -1,0 +1,6 @@
+services:
+  user:
+    build: .
+    image: theikalman/product:latest
+    ports:
+      - "8080:8080"
