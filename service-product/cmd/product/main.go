@@ -12,6 +12,8 @@ import (
 	"github.com/go-kit/log"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 
 	"github.com/theikalman/product"
 )
@@ -35,8 +37,19 @@ func main() {
 
 	fieldKeys := []string{"method"}
 
+	db, err := gorm.Open(sqlite.Open("product.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+	if err := db.AutoMigrate(&product.Product{}); err != nil {
+		panic(fmt.Sprintf("migration failed: %s", err))
+	}
+
+	repository := product.NewSQLiteRepository(db)
+
 	var s product.Service
-	s = product.NewService()
+	s = product.NewService(repository)
 	s = product.NewLoggingService(log.With(logger, "component", "product"), s)
 	s = product.NewInstrumentingService(
 		kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{

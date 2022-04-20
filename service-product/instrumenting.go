@@ -21,6 +21,15 @@ func (s instrumentingService) Version() Version {
 	return s.Service.Version()
 }
 
+func (s instrumentingService) CreateProduct(product Product) (Product, error) {
+	defer func(begin time.Time) {
+		s.requestCount.With("method", "version").Add(1)
+		s.requestLatency.With("method", "version").Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	return s.Service.CreateProduct(product)
+}
+
 // NewInstrumentingService returns an instance of an instrumenting Service.
 func NewInstrumentingService(counter metrics.Counter, latency metrics.Histogram, s Service) Service {
 	return &instrumentingService{

@@ -26,9 +26,17 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 		opts...,
 	)
 
+	createProductHandler := kithttp.NewServer(
+		makeCreateProductEndpoint(s),
+		decodeCreateProductRequest,
+		encodeResponse,
+		opts...,
+	)
+
 	r := mux.NewRouter()
 
 	r.Handle("/product/v1/version", getVersionHandler).Methods("GET")
+	r.Handle("/product/v1/product", createProductHandler).Methods("POST")
 
 	return r
 }
@@ -45,6 +53,24 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"error": err.Error(),
 	})
+}
+
+func decodeCreateProductRequest(_ context.Context, request *http.Request) (interface{}, error) {
+	var productRequest struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+	}
+
+	if err := json.NewDecoder(request.Body).Decode(&productRequest); err != nil {
+		return nil, err
+	}
+
+	product := Product{
+		Name:        productRequest.Name,
+		Description: productRequest.Description,
+	}
+
+	return product, nil
 }
 
 func decodeEmptyRequestBody(_ context.Context, _ *http.Request) (interface{}, error) {

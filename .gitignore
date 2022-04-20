@@ -16,3 +16,6 @@
 
 # VSCode configurations
 .vscode
+
+# SQLite
+*.db

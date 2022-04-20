@@ -21,6 +21,16 @@ func (s loggingService) Version() Version {
 	return s.Service.Version()
 }
 
+func (s loggingService) CreateProduct(product Product) (Product, error) {
+	defer func(begin time.Time) {
+		s.logger.Log(
+			"method", "create",
+			"took", time.Since(begin),
+		)
+	}(time.Now())
+	return s.Service.CreateProduct(product)
+}
+
 func NewLoggingService(logger log.Logger, s Service) Service {
 	return loggingService{logger: logger, Service: s}
 }
