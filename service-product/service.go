@@ -14,6 +14,7 @@ type Service interface {
 	Version() Version
 
 	CreateProduct(product Product) (Product, error)
+	GetProducts() ([]Product, error)
 }
 
 type service struct {
@@ -26,6 +27,10 @@ func (s service) Version() Version {
 
 func (s service) CreateProduct(product Product) (Product, error) {
 	return s.repository.Save(product)
+}
+
+func (s service) GetProducts() ([]Product, error) {
+	return s.repository.GetProducts()
 }
 
 // NewService creates a user service with necessary dependencies.

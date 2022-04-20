@@ -31,6 +31,16 @@ func (s loggingService) CreateProduct(product Product) (Product, error) {
 	return s.Service.CreateProduct(product)
 }
 
+func (s loggingService) GetProducts() ([]Product, error) {
+	defer func(begin time.Time) {
+		s.logger.Log(
+			"method", "get_products",
+			"took", time.Since(begin),
+		)
+	}(time.Now())
+	return s.Service.GetProducts()
+}
+
 func NewLoggingService(logger log.Logger, s Service) Service {
 	return loggingService{logger: logger, Service: s}
 }

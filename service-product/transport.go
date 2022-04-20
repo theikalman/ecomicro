@@ -33,10 +33,18 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 		opts...,
 	)
 
+	getProductsHandler := kithttp.NewServer(
+		makeGetProductsEndpoint(s),
+		decodeEmptyRequestBody,
+		encodeResponse,
+		opts...,
+	)
+
 	r := mux.NewRouter()
 
 	r.Handle("/product/v1/version", getVersionHandler).Methods("GET")
 	r.Handle("/product/v1/product", createProductHandler).Methods("POST")
+	r.Handle("/product/v1/product", getProductsHandler).Methods("GET")
 
 	return r
 }

@@ -23,3 +23,9 @@ func makeCreateProductEndpoint(s Service) endpoint.Endpoint {
 		return s.CreateProduct(product)
 	}
 }
+
+func makeGetProductsEndpoint(s Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		return s.GetProducts()
+	}
+}
