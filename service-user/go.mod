@@ -8,6 +8,9 @@ require (
 	github.com/go-kit/log v0.2.0
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.12.1
+	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
+	gorm.io/driver/sqlite v1.3.1
+	gorm.io/gorm v1.23.4
 )
 
 require (
@@ -16,6 +19,9 @@ require (
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.1.2 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/mattn/go-sqlite3 v1.14.9 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
