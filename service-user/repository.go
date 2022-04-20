@@ -7,7 +7,7 @@ import (
 type User struct {
 	gorm.Model
 	Username string
-	Password string `json:"-"`
+	Password string `json:"-"` // do not share password to the user back
 }
 
 type Repository interface {
