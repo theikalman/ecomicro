@@ -2,7 +2,6 @@ package product
 
 import (
 	"context"
-	"errors"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -17,7 +16,7 @@ func makeCreateProductEndpoint(s Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		product, ok := request.(Product)
 		if !ok {
-			return nil, errors.New("request body decoder is invalid")
+			return nil, errInvalidRequestBody
 		}
 
 		return s.CreateProduct(product)

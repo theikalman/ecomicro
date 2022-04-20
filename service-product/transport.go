@@ -14,6 +14,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var (
+	errInvalidProductID   = errors.New("invalid product id")
+	errInvalidRequestBody = errors.New("invalid request body")
+)
+
 // MakeHandler returns a handler for the booking service.
 func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 	opts := []kithttp.ServerOption{
@@ -63,7 +68,7 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	switch err {
-	case errInvalidProductID:
+	case errInvalidProductID, errInvalidRequestBody:
 		w.WriteHeader(http.StatusBadRequest)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
@@ -90,10 +95,6 @@ func decodeCreateProductRequest(_ context.Context, request *http.Request) (inter
 
 	return product, nil
 }
-
-var (
-	errInvalidProductID = errors.New("invalid product id")
-)
 
 type getProductByIDQuery struct {
 	productID uint
