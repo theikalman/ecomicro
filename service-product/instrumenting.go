@@ -39,6 +39,15 @@ func (s instrumentingService) GetProducts() ([]Product, error) {
 	return s.Service.GetProducts()
 }
 
+func (s instrumentingService) GetProductByID(productID uint) (Product, error) {
+	defer func(begin time.Time) {
+		s.requestCount.With("method", "get_by_id").Add(1)
+		s.requestLatency.With("method", "get_by_id").Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	return s.Service.GetProductByID(productID)
+}
+
 // NewInstrumentingService returns an instance of an instrumenting Service.
 func NewInstrumentingService(counter metrics.Counter, latency metrics.Histogram, s Service) Service {
 	return &instrumentingService{

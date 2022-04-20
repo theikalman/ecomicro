@@ -24,6 +24,13 @@ func makeCreateProductEndpoint(s Service) endpoint.Endpoint {
 	}
 }
 
+func makeGetProductByIDEndpoint(s Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		getProductByIDQuery := request.(getProductByIDQuery)
+		return s.GetProductByID(getProductByIDQuery.productID)
+	}
+}
+
 func makeGetProductsEndpoint(s Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		return s.GetProducts()

@@ -3,9 +3,11 @@ package product
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
+	"strconv"
 
-	"github.com/go-kit/examples/shipping/cargo"
 	"github.com/go-kit/kit/transport"
 	kithttp "github.com/go-kit/kit/transport/http"
 	kitlog "github.com/go-kit/log"
@@ -26,9 +28,9 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 		opts...,
 	)
 
-	createProductHandler := kithttp.NewServer(
-		makeCreateProductEndpoint(s),
-		decodeCreateProductRequest,
+	getProductByIDHandler := kithttp.NewServer(
+		makeGetProductByIDEndpoint(s),
+		decodeGetProductByIDRequestQuery,
 		encodeResponse,
 		opts...,
 	)
@@ -40,11 +42,19 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 		opts...,
 	)
 
+	createProductHandler := kithttp.NewServer(
+		makeCreateProductEndpoint(s),
+		decodeCreateProductRequest,
+		encodeResponse,
+		opts...,
+	)
+
 	r := mux.NewRouter()
 
 	r.Handle("/product/v1/version", getVersionHandler).Methods("GET")
-	r.Handle("/product/v1/product", createProductHandler).Methods("POST")
+	r.Handle("/product/v1/product/{productID}", getProductByIDHandler).Methods("GET")
 	r.Handle("/product/v1/product", getProductsHandler).Methods("GET")
+	r.Handle("/product/v1/product", createProductHandler).Methods("POST")
 
 	return r
 }
@@ -53,8 +63,8 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	switch err {
-	case cargo.ErrUnknown:
-		w.WriteHeader(http.StatusNotFound)
+	case errInvalidProductID:
+		w.WriteHeader(http.StatusBadRequest)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 	}
@@ -79,6 +89,32 @@ func decodeCreateProductRequest(_ context.Context, request *http.Request) (inter
 	}
 
 	return product, nil
+}
+
+var (
+	errInvalidProductID = errors.New("invalid product id")
+)
+
+type getProductByIDQuery struct {
+	productID uint
+}
+
+func decodeGetProductByIDRequestQuery(_ context.Context, r *http.Request) (interface{}, error) {
+	queries := mux.Vars(r)
+	productIDQuery, ok := queries["productID"]
+	if !ok {
+		return nil, errInvalidProductID
+	}
+
+	productID, err := strconv.ParseUint(productIDQuery, 10, 64)
+	if err != nil {
+		log.Printf("unable to parse to uint: %s", err) // TODO Make logger to be injectable
+		return nil, errInvalidProductID
+	}
+
+	return getProductByIDQuery{
+		productID: uint(productID),
+	}, nil
 }
 
 func decodeEmptyRequestBody(_ context.Context, _ *http.Request) (interface{}, error) {

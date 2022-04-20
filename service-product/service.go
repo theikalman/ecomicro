@@ -15,6 +15,7 @@ type Service interface {
 
 	CreateProduct(product Product) (Product, error)
 	GetProducts() ([]Product, error)
+	GetProductByID(productID uint) (Product, error)
 }
 
 type service struct {
@@ -31,6 +32,10 @@ func (s service) CreateProduct(product Product) (Product, error) {
 
 func (s service) GetProducts() ([]Product, error) {
 	return s.repository.GetProducts()
+}
+
+func (s service) GetProductByID(productID uint) (Product, error) {
+	return s.repository.GetByID(productID)
 }
 
 // NewService creates a user service with necessary dependencies.
