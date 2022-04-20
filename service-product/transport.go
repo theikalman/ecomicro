@@ -58,7 +58,7 @@ func MakeHandler(s Service, logger kitlog.Logger) http.Handler {
 
 	r.Handle("/product/v1/version", getVersionHandler).Methods("GET")
 	r.Handle("/product/v1/product/{productID}", getProductByIDHandler).Methods("GET")
-	r.Handle("/product/v1/product", getProductsHandler).Methods("GET")
+	r.Handle("/product/v1/product", getProductsHandler).Methods("GET") // TODO Pagination
 	r.Handle("/product/v1/product", createProductHandler).Methods("POST")
 
 	return r
