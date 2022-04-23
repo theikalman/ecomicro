@@ -12,7 +12,7 @@ type instrumentingService struct {
 	Service
 }
 
-func (s instrumentingService) Version() string {
+func (s instrumentingService) Version() Version {
 	defer func(begin time.Time) {
 		s.requestCount.With("method", "version").Add(1)
 		s.requestLatency.With("method", "version").Observe(time.Since(begin).Seconds())

@@ -11,7 +11,7 @@ type loggingService struct {
 	Service
 }
 
-func (s loggingService) Version() string {
+func (s loggingService) Version() Version {
 	defer func(begin time.Time) {
 		s.logger.Log(
 			"method", "version",

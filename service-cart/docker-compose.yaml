@@ -1,0 +1,6 @@
+services:
+  cart:
+    build: .
+    image: theikalman/cart:latest
+    ports:
+      - "8080:8080"

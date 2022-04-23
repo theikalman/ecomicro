@@ -6,15 +6,19 @@ var (
 
 type EmptyBody struct{}
 
+type Version struct {
+	Version string `json:"version"`
+}
+
 type Service interface {
-	Version() string
+	Version() Version
 }
 
 type service struct {
 }
 
-func (s service) Version() string {
-	return "v0.1"
+func (s service) Version() Version {
+	return Version{Version: "v0.1"}
 }
 
 // NewService creates a user service with necessary dependencies.
